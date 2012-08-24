@@ -183,6 +183,7 @@ QgsVectorLayer::~QgsVectorLayer()
   mValid = false;
 
   delete mRenderer;
+  delete mRendererV2;
   delete mDataProvider;
   delete mJoinBuffer;
   delete mLabel;
@@ -4154,6 +4155,9 @@ bool QgsVectorLayer::copySymbologySettings( const QgsMapLayer& other )
   }
   else
   {
+    // We just deleted it and didn't set a new one.
+    // Prevent from deleting again in destructor.
+    mRenderer = NULL;
     return false;
   }
 }
