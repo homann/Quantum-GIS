@@ -227,6 +227,12 @@ QgsProviderRegistry::QgsProviderRegistry( QString pluginPath )
 
 QgsProviderRegistry::~QgsProviderRegistry()
 {
+  Providers::const_iterator iter;
+
+  // Delete all providers inte the registry.
+  for (iter = mProviders.begin(); iter != mProviders.end(); ++iter) {
+    delete iter->second;
+  }
 }
 
 

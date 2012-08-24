@@ -86,6 +86,7 @@ class QgsTileScaleWidget;
 #include "qgsconfig.h"
 #include "qgsfeature.h"
 #include "qgspoint.h"
+#include "qgsmapoverviewcanvas.h"
 #include "qgsrasterlayer.h"
 #include "qgssnappingdialog.h"
 
@@ -991,13 +992,16 @@ class QgisApp : public QMainWindow, private Ui::MainWindow
     void createActionGroups();
     void createMenus();
     void createToolBars();
+    void destroyToolBars();
     void createStatusBar();
     void setupConnections();
     void initLegend();
     void createOverview();
+    void destroyOverview();
     void createCanvasTools();
     bool createDB();
     void createMapTips();
+    void destroyMapTips();
     void updateCRSStatusBar();
     void createDecorations();
 
@@ -1132,6 +1136,8 @@ class QgisApp : public QMainWindow, private Ui::MainWindow
     QgsLegend *mMapLegend;
     //! Table of contents (legend) to order layers of the map
     QgsLayerOrder *mMapLayerOrder;
+    //! The overview map
+    QgsMapOverviewCanvas *mOverviewCanvas;
     //! Cursor for the overview map
     QCursor *mOverviewMapCursor;
     //! scale factor

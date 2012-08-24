@@ -726,6 +726,10 @@ QgisApp::~QgisApp()
 
   delete mpGpsWidget;
 
+  destroyMapTips();
+  destroyOverview();
+  destroyToolBars();
+
   deletePrintComposers();
   removeAnnotationItems();
 
@@ -1215,7 +1219,7 @@ void QgisApp::createMenus()
   // Help menu
   // add What's this button to it
   QAction* before = mActionHelpAPI;
-  mHelpMenu->insertAction( before, QWhatsThis::createAction() );
+  mHelpMenu->insertAction( before, QWhatsThis::createAction( this ) );
 }
 
 void QgisApp::createToolBars()
@@ -1333,8 +1337,13 @@ void QgisApp::createToolBars()
 
   // Help Toolbar
 
-  mHelpToolBar->addAction( QWhatsThis::createAction() );
+  mHelpToolBar->addAction( QWhatsThis::createAction( this ) );
 
+}
+
+void QgisApp::destroyToolBars()
+{
+  // Nothing yet
 }
 
 void QgisApp::createStatusBar()
@@ -1816,25 +1825,25 @@ void QgisApp::createCanvasTools()
 void QgisApp::createOverview()
 {
   // overview canvas
-  QgsMapOverviewCanvas* overviewCanvas = new QgsMapOverviewCanvas( NULL, mMapCanvas );
-  overviewCanvas->setWhatsThis( tr( "Map overview canvas. This canvas can be used to display a locator map that shows the current extent of the map canvas. The current extent is shown as a red rectangle. Any layer on the map can be added to the overview canvas." ) );
+  mOverviewCanvas = new QgsMapOverviewCanvas( NULL, mMapCanvas );
+  mOverviewCanvas->setWhatsThis( tr( "Map overview canvas. This canvas can be used to display a locator map that shows the current extent of the map canvas. The current extent is shown as a red rectangle. Any layer on the map can be added to the overview canvas." ) );
 
   QBitmap overviewPanBmp = QBitmap::fromData( QSize( 16, 16 ), pan_bits );
   QBitmap overviewPanBmpMask = QBitmap::fromData( QSize( 16, 16 ), pan_mask_bits );
   mOverviewMapCursor = new QCursor( overviewPanBmp, overviewPanBmpMask, 0, 0 ); //set upper left corner as hot spot - this is better when extent marker is small; hand won't cover the marker
-  overviewCanvas->setCursor( *mOverviewMapCursor );
+  mOverviewCanvas->setCursor( *mOverviewMapCursor );
 //  QVBoxLayout *myOverviewLayout = new QVBoxLayout;
 //  myOverviewLayout->addWidget(overviewCanvas);
 //  overviewFrame->setLayout(myOverviewLayout);
   mOverviewDock = new QDockWidget( tr( "Overview" ), this );
   mOverviewDock->setObjectName( "Overview" );
   mOverviewDock->setAllowedAreas( Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
-  mOverviewDock->setWidget( overviewCanvas );
+  mOverviewDock->setWidget( mOverviewCanvas );
   addDockWidget( Qt::LeftDockWidgetArea, mOverviewDock );
   // add to the Panel submenu
   mPanelMenu->addAction( mOverviewDock->toggleViewAction() );
 
-  mMapCanvas->enableOverviewMode( overviewCanvas );
+  mMapCanvas->enableOverviewMode( mOverviewCanvas );
 
   // moved here to set anti aliasing to both map canvas and overview
   QSettings mySettings;
@@ -1845,6 +1854,13 @@ void QgisApp::createOverview()
   int action = mySettings.value( "/qgis/wheel_action", 2 ).toInt();
   double zoomFactor = mySettings.value( "/qgis/zoom_factor", 2 ).toDouble();
   mMapCanvas->setWheelAction(( QgsMapCanvas::WheelAction ) action, zoomFactor );
+}
+
+void QgisApp::destroyOverview()
+{
+  delete mOverviewCanvas;
+  delete mOverviewMapCursor;
+  delete mOverviewDock;
 }
 
 void QgisApp::addDockWidget( Qt::DockWidgetArea theArea, QDockWidget * thepDockWidget )
@@ -2050,6 +2066,12 @@ void QgisApp::createMapTips()
   mpMapTipsTimer->setInterval( 850 );
   // Create the maptips object
   mpMaptip = new QgsMapTip();
+}
+
+void QgisApp::destroyMapTips()
+{
+  delete mpMapTipsTimer;
+  delete mpMaptip;
 }
 
 void QgisApp::createDecorations()
