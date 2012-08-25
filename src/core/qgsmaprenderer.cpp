@@ -55,6 +55,7 @@ QgsMapRenderer::QgsMapRenderer()
   setMapUnits( QGis::Degrees );
 
   mSize = QSize( 0, 0 );
+  mScale = 1.0;
 
   mProjectionsEnabled = false;
   mDestCRS = new QgsCoordinateReferenceSystem( GEOCRS_ID, QgsCoordinateReferenceSystem::InternalCrsId ); //WGS 84

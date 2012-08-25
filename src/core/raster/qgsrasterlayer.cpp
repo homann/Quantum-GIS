@@ -1611,6 +1611,7 @@ QLibrary* QgsRasterLayer::loadProviderLibrary( QString theProviderKey )
 QgsRasterDataProvider* QgsRasterLayer::loadProvider( QString theProviderKey, QString theDataSource )
 {
   QgsDebugMsg( "Entered" );
+  // myLib is forgotten and leaked, but cant unload provider anyway.
   QLibrary*  myLib = QgsRasterLayer::loadProviderLibrary( theProviderKey );
   QgsDebugMsg( "Library loaded" );
   if ( !myLib )
