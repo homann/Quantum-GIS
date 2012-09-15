@@ -32,12 +32,15 @@ QgsTextDiagram::~QgsTextDiagram()
 
 QSizeF QgsTextDiagram::diagramSize( const QgsAttributeMap& attributes, const QgsRenderContext& c, const QgsDiagramSettings& s, const QgsDiagramInterpolationSettings& is )
 {
-    QgsAttributeMap::const_iterator attIt = attributes.find( is.classificationAttribute );
+  Q_UNUSED( c );
+
+  QgsAttributeMap::const_iterator attIt = attributes.find( is.classificationAttribute );
+
   if ( attIt == attributes.constEnd() )
   {
     return QSizeF(); //zero size if attribute is missing
   }
-  
+
   double scaledValue = attIt.value().toDouble();
   double scaledLowerValue = is.lowerValue;
   double scaledUpperValue = is.upperValue;
@@ -75,6 +78,9 @@ QSizeF QgsTextDiagram::diagramSize( const QgsAttributeMap& attributes, const Qgs
 
 QSizeF QgsTextDiagram::diagramSize( const QgsAttributeMap& attributes, const QgsRenderContext& c, const QgsDiagramSettings& s )
 {
+  Q_UNUSED( c );
+  Q_UNUSED( attributes );
+
   return s.size;
 }
 
@@ -212,11 +218,11 @@ void QgsTextDiagram::renderDiagram( const QgsAttributeMap& att, QgsRenderContext
     mPen.setColor( s.categoryColors.at( i ) );
     p->setPen( mPen );
     QPointF position = textPositions.at( i );
-    
+
     // Calculate vertical placement
     double xOffset = 0;
 
-    switch( s.labelPlacementMethod )
+    switch ( s.labelPlacementMethod )
     {
       case QgsDiagramSettings::Height:
         xOffset = textHeight / 2.0;
